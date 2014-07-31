@@ -9,10 +9,21 @@
 #import "ABFAddToDoItemViewController.h"
 
 @interface ABFAddToDoItemViewController ()
+@property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *doneButton;
 
 @end
 
 @implementation ABFAddToDoItemViewController
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if (sender != self.doneButton) return;
+    if (self.textField.text.length > 0) {
+        self.toDoItem = [[ABFToDoItem alloc]init];
+        self.toDoItem.itemName = self.textField.text;
+        self.toDoItem.completed = NO;
+    }
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

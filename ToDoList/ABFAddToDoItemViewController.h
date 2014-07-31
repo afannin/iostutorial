@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "ABFToDoItem.h"
 @interface ABFAddToDoItemViewController : UIViewController
+
+@property ABFToDoItem *toDoItem;
 
 @end

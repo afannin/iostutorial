@@ -7,15 +7,36 @@
 //
 
 #import "ABFToDoListTableViewController.h"
+#import "ABFToDoItem.h"
+#import "ABFAddToDoItemViewController.h"
 
 @interface ABFToDoListTableViewController ()
+
+@property NSMutableArray *toDoItems;
 
 @end
 
 @implementation ABFToDoListTableViewController
 
+- (void)loadInitialData {
+    ABFToDoItem *item1 = [[ABFToDoItem alloc]init];
+    item1.itemName = @"Buy Milk";
+    [self.toDoItems addObject:item1];
+    ABFToDoItem *item2 = [[ABFToDoItem alloc]init];
+    item2.itemName = @"Buy Eggs";
+    [self.toDoItems addObject:item2];
+    ABFToDoItem *item3 = [[ABFToDoItem alloc]init];
+    item3.itemName = @"Read a book";
+    [self.toDoItems addObject:item3];
+}
+
 - (IBAction)unwindToList:(UIStoryboardSegue *)segue {
-    
+    ABFAddToDoItemViewController *source = [segue sourceViewController];
+    ABFToDoItem *item = source.toDoItem;
+    if (item != nil){
+        [self.toDoItems addObject:item];
+        [self.tableView reloadData];
+    }
 }
 
 - (id)initWithStyle:(UITableViewStyle)style
@@ -30,6 +51,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.toDoItems = [[NSMutableArray alloc] init];
+    [self loadInitialData];
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -48,28 +71,31 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    return [self.toDoItems count];
 }
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ListPrototypeCell" forIndexPath:indexPath];
+    ABFToDoItem *toDoItem = [self.toDoItems objectAtIndex:indexPath.row];
+    cell.textLabel.text = toDoItem.itemName;
     
-    // Configure the cell...
+    if (toDoItem.completed) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }else {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+    }
     
     return cell;
 }
-*/
 
 /*
 // Override to support conditional editing of the table view.
@@ -119,5 +145,12 @@
     // Pass the selected object to the new view controller.
 }
 */
+#pragma mark - Table view delegate
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    ABFToDoItem *tappedItem = [self.toDoItems objectAtIndex:indexPath.row];
+    tappedItem.completed = !tappedItem.completed;
+    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:(UITableViewRowAnimationNone)];
+}
 @end
